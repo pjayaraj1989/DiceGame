@@ -2,18 +2,19 @@ import random
 import os
 
 # Define the playground size
-playground_size = 1000
+playground_size = 100
 
 # Function to print the playground
 def print_playground(positions, traps, safes):
-    #os.system('cls' if os.name == 'nt' else 'clear')
-    playground = ['_'] * playground_size
+    playground_char = '_'
+    os.system('cls' if os.name == 'nt' else 'clear')
+    playground = [playground_char] * playground_size
     for trap in traps:
-        playground[trap] = 'T'
+        playground[trap] = 'x'
     for safe in safes:
         playground[safe] = 'S'
     for i, pos in enumerate(positions):
-        if playground[pos] == '_':
+        if playground[pos] == playground_char:
             playground[pos] = chr(65 + i)
         else:
             playground[pos] += chr(65 + i)
@@ -58,4 +59,6 @@ while all(pos < playground_size - 1 for pos in player_positions):
     if dice_roll != 6:
         current_player = (current_player + 1) % num_players
 
-print(f"🎉 Congratulations! Player {chr(65 + current_player)} has reached the end of the playground.")
+winner = player_positions.index(max(player_positions))
+
+print(f"🎉 Congratulations! Player {chr(65 + winner)} has reached the end of the playground.")
