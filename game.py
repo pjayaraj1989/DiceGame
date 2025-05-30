@@ -1,5 +1,6 @@
 import random
 import os
+import time
 
 # Define the playground size
 playground_size = 100
@@ -20,6 +21,13 @@ def print_playground(positions, traps, safes):
             playground[pos] += chr(65 + i)
     print(''.join(playground))
 
+def animate_movement(positions, old_pos, current_player, traps, safes):
+    temp_positions = positions.copy()
+    for pos in range(old_pos, positions[current_player] + 1):
+        temp_positions[current_player] = pos
+        print_playground(temp_positions, traps, safes)
+        time.sleep(0.2)  # Delay between each step
+
 # Get number of players
 num_players = int(input("Enter the number of players: "))
 
@@ -39,25 +47,32 @@ while all(pos < playground_size - 1 for pos in player_positions):
     dice_roll = random.randint(1, 6)
     print(f"Player {chr(65 + current_player)} rolled a {dice_roll}!")
 
+    old_position = player_positions[current_player]
     player_positions[current_player] += dice_roll
     if player_positions[current_player] >= playground_size:
         player_positions[current_player] = playground_size - 1
 
+    # Animate the movement
+    animate_movement(player_positions, old_position, current_player, trap_spots, safe_spots)
+
     # Trap check (unless it's also a safe spot)
     if player_positions[current_player] in trap_spots and player_positions[current_player] not in safe_spots:
         print(f"Player {chr(65 + current_player)} landed on a trap! Back to start.")
+        time.sleep(1)  # Pause to show the trap landing
         player_positions[current_player] = 0
+        print_playground(player_positions, trap_spots, safe_spots)
 
     # Collision check
     for i in range(num_players):
         if i != current_player and player_positions[current_player] == player_positions[i]:
             print(f"Player {chr(65 + current_player)} landed on Player {chr(65 + i)}'s spot! Player {chr(65 + i)} goes back to start.")
+            time.sleep(1)  # Pause to show the collision
             player_positions[i] = 0
-
-    print_playground(player_positions, trap_spots, safe_spots)
+            print_playground(player_positions, trap_spots, safe_spots)
 
     if dice_roll != 6:
         current_player = (current_player + 1) % num_players
+    time.sleep(0.5)  # Small pause before next turn
 
 winner = player_positions.index(max(player_positions))
 
